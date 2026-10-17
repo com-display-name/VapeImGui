@@ -1,0 +1,9 @@
+Checks: '-*,readability-identifier-naming'
+HeaderFilterRegex: '.*[\\/]src[\\/][A-Za-z0-9]+\.h$'
+CheckOptions:
+  readability-identifier-naming.NamespaceCase: CamelCase
+  readability-identifier-naming.VariableCase: CamelCase
+  readability-identifier-naming.MemberCase: CamelCase
+  readability-identifier-naming.ParameterCase: CamelCase
+  readability-identifier-naming.FunctionCase: CamelCase
+  readability-identifier-naming.FunctionIgnoredRegexp: 'wWinMain|ImGui_Impl.*'

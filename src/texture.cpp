@@ -1,83 +1,80 @@
-#include "texture.h"
+#include "Texture.h"
 #include <Windows.h>
 #include <d3d11.h>
 #include <filesystem>
+#include <memory>
+#include <wrl/client.h>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "../third_party/imgui/stb_image.h"
 
-bool LoadTextureFromFile(const std::string& path, ID3D11Device* device,
-                         ID3D11ShaderResourceView** outSrv, int* outW, int* outH) {
-    int w = 0, h = 0, channels = 0;
-    unsigned char* data = stbi_load(path.c_str(), &w, &h, &channels, 4);
-    if (!data || !device || !outSrv)
+bool LoadTextureFromFile(const std::string& Path, ID3D11Device* Device,
+                         ID3D11ShaderResourceView** OutputResource, int* OutputWidth, int* OutputHeight) {
+    if (!Device || !OutputResource)
+        return false;
+    *OutputResource = nullptr;
+
+    int Width = 0, Height = 0, Channels = 0;
+    std::unique_ptr<unsigned char, decltype(&stbi_image_free)> Pixels(
+        stbi_load(Path.c_str(), &Width, &Height, &Channels, 4), stbi_image_free);
+    if (!Pixels)
         return false;
 
-    D3D11_TEXTURE2D_DESC desc = {};
-    desc.Width = (UINT)w;
-    desc.Height = (UINT)h;
-    desc.MipLevels = 1;
-    desc.ArraySize = 1;
-    desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-    desc.SampleDesc.Count = 1;
-    desc.Usage = D3D11_USAGE_DEFAULT;
-    desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+    D3D11_TEXTURE2D_DESC Description = {};
+    Description.Width = static_cast<UINT>(Width);
+    Description.Height = static_cast<UINT>(Height);
+    Description.MipLevels = 1;
+    Description.ArraySize = 1;
+    Description.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+    Description.SampleDesc.Count = 1;
+    Description.Usage = D3D11_USAGE_DEFAULT;
+    Description.BindFlags = D3D11_BIND_SHADER_RESOURCE;
 
-    D3D11_SUBRESOURCE_DATA sub = {};
-    sub.pSysMem = data;
-    sub.SysMemPitch = (UINT)(w * 4);
+    D3D11_SUBRESOURCE_DATA InitialData = {};
+    InitialData.pSysMem = Pixels.get();
+    InitialData.SysMemPitch = static_cast<UINT>(Width * 4);
 
-    ID3D11Texture2D* tex = nullptr;
-    HRESULT hr = device->CreateTexture2D(&desc, &sub, &tex);
-    stbi_image_free(data);
-    if (FAILED(hr) || !tex)
+    Microsoft::WRL::ComPtr<ID3D11Texture2D> Texture;
+    if (FAILED(Device->CreateTexture2D(&Description, &InitialData, Texture.GetAddressOf())))
         return false;
 
-    D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
-    srvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-    srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-    srvDesc.Texture2D.MipLevels = 1;
-    hr = device->CreateShaderResourceView(tex, &srvDesc, outSrv);
-    tex->Release();
-    if (FAILED(hr))
+    D3D11_SHADER_RESOURCE_VIEW_DESC ViewDescription = {};
+    ViewDescription.Format = Description.Format;
+    ViewDescription.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+    ViewDescription.Texture2D.MipLevels = 1;
+    if (FAILED(Device->CreateShaderResourceView(Texture.Get(), &ViewDescription, OutputResource)))
         return false;
 
-    if (outW) *outW = w;
-    if (outH) *outH = h;
+    if (OutputWidth)
+        *OutputWidth = Width;
+    if (OutputHeight)
+        *OutputHeight = Height;
     return true;
 }
 
-std::string FindIconPath(const std::string& file) {
-    namespace fs = std::filesystem;
-    char exePath[MAX_PATH] = {0};
-    GetModuleFileNameA(nullptr, exePath, MAX_PATH);
-    fs::path exeDir = fs::path(exePath).parent_path();
+std::string FindIconPath(const std::string& File) {
+    namespace Filesystem = std::filesystem;
+    constexpr const char* RelativeDirectories[] = {"assets/icons/", "../VapeUI/assets/icons/",
+                                                   "../../VapeUI/assets/icons/"};
+    for (const char* Directory : RelativeDirectories) {
+        const auto Candidate = Filesystem::current_path() / Directory / File;
+        if (Filesystem::exists(Candidate))
+            return Candidate.string();
+    }
 
-    const char* candidates[] = {
-        "assets/icons/",
-        "../VapeUI/assets/icons/",
-        "../../VapeUI/assets/icons/",
-    };
-    // 1) relative to CWD
-    for (auto c : candidates) {
-        fs::path p = fs::current_path() / c / file;
-        if (fs::exists(p))
-            return p.string();
+    char ExecutablePath[MAX_PATH] = {};
+    GetModuleFileNameA(nullptr, ExecutablePath, MAX_PATH);
+    auto Directory = Filesystem::path(ExecutablePath).parent_path();
+    for (int Level = 0; Level < 5; ++Level) {
+        for (const char* Relative : {"assets/icons", "VapeUI/assets/icons"}) {
+            const auto Candidate = Directory / Relative / File;
+            if (Filesystem::exists(Candidate))
+                return Candidate.string();
+        }
+        Directory = Directory.parent_path();
     }
-    // 2) relative to exe dir (walk up a few levels: handles x64/Debug etc.)
-    fs::path dir = exeDir;
-    for (int i = 0; i < 5; ++i) {
-        fs::path p = dir / "assets" / "icons" / file;
-        if (fs::exists(p))
-            return p.string();
-        fs::path q = dir / "VapeUI" / "assets" / "icons" / file;
-        if (fs::exists(q))
-            return q.string();
-        dir = dir.parent_path();
-    }
-    // 3) absolute project path fallback (dev machine)
-    fs::path abs = fs::path("C:/Users/admin/Desktop/Workspace 1/VapeUI/VapeUI/assets/icons") / file;
-    if (fs::exists(abs))
-        return abs.string();
-    return "";
+
+    const auto LegacyPath =
+        Filesystem::path("C:/Users/admin/Desktop/Workspace 1/VapeUI/VapeUI/assets/icons") / File;
+    return Filesystem::exists(LegacyPath) ? LegacyPath.string() : std::string();
 }

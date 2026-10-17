@@ -144,11 +144,11 @@
   </ItemDefinitionGroup>
 
   <ItemGroup>
-    <ClInclude Include="src\vape_data.h" />
-    <ClInclude Include="src\vape_gui.h" />
-    <ClInclude Include="src\vape_internal.h" />
-    <ClInclude Include="src\vape_style.h" />
-    <ClInclude Include="src\texture.h" />
+    <ClInclude Include="src\VapeData.h" />
+    <ClInclude Include="src\VapeGui.h" />
+    <ClInclude Include="src\VapeInternal.h" />
+    <ClInclude Include="src\VapeStyle.h" />
+    <ClInclude Include="src\Texture.h" />
     <ClInclude Include="third_party\imgui\imgui.h" />
     <ClInclude Include="third_party\imgui\imconfig.h" />
     <ClInclude Include="third_party\imgui\imgui_internal.h" />
@@ -160,18 +160,18 @@
     <ClInclude Include="third_party\imgui\imgui_impl_dx11.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="src\vape_category.cpp" />
-    <ClCompile Include="src\vape_friends.cpp" />
-    <ClCompile Include="src\vape_gui.cpp" />
-    <ClCompile Include="src\vape_hud.cpp" />
-    <ClCompile Include="src\vape_legit.cpp" />
-    <ClCompile Include="src\vape_main_window.cpp" />
-    <ClCompile Include="src\vape_module_data.cpp" />
-    <ClCompile Include="src\vape_modules.cpp" />
-    <ClCompile Include="src\vape_search.cpp" />
-    <ClCompile Include="src\vape_settings.cpp" />
-    <ClCompile Include="src\texture.cpp" />
+    <ClCompile Include="src\Main.cpp" />
+    <ClCompile Include="src\VapeCategory.cpp" />
+    <ClCompile Include="src\VapeFriends.cpp" />
+    <ClCompile Include="src\VapeGui.cpp" />
+    <ClCompile Include="src\VapeHud.cpp" />
+    <ClCompile Include="src\VapeLegit.cpp" />
+    <ClCompile Include="src\VapeMainWindow.cpp" />
+    <ClCompile Include="src\VapeModuleData.cpp" />
+    <ClCompile Include="src\VapeModules.cpp" />
+    <ClCompile Include="src\VapeSearch.cpp" />
+    <ClCompile Include="src\VapeSettings.cpp" />
+    <ClCompile Include="src\Texture.cpp" />
     <ClCompile Include="third_party\imgui\imgui.cpp" />
     <ClCompile Include="third_party\imgui\imgui_draw.cpp" />
     <ClCompile Include="third_party\imgui\imgui_tables.cpp" />
