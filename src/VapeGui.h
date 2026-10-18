@@ -48,10 +48,10 @@ class VapeGui {
     bool MonitorDropdownOpen = false;
     bool AlwaysOnTop = true;
 
-    bool Screenproof = false;
+    bool Streamproof = false;
     std::function<void(int)> OnMonitorChange;
     std::function<void(bool)> OnTopmostChange;
-    std::function<void(bool)> OnScreenproofChange;
+    std::function<void(bool)> OnStreamproofChange;
 
     bool FriendsOpen = false;
     bool FriendsExpanded = true;

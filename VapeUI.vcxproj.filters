@@ -81,6 +81,9 @@
     <ClCompile Include="third_party\imgui\imgui_impl_dx11.cpp">
       <Filter>Source Files\imgui</Filter>
     </ClCompile>
+    <ClCompile Include="src\Configs.h">
+      <Filter>Header Files\src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\VapeData.h">
@@ -125,5 +128,34 @@
     <ClInclude Include="third_party\imgui\imgui_impl_dx11.h">
       <Filter>Header Files\imgui</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="assets\icons\combat.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="assets\icons\blatant.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="assets\icons\render.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="assets\icons\utility.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="assets\icons\world.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="assets\icons\inventory.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="assets\icons\friends.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="assets\icons\settings.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="assets\icons\search.png">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

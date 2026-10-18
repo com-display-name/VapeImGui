@@ -163,42 +163,6 @@ static std::string ToLower(std::string Text) {
     return Text;
 }
 
-static int ParseMonitorArgument(const char* Arguments) {
-    std::string CommandLine = Arguments ? Arguments : "";
-    const char* Key = "--monitor=";
-    size_t Position = ToLower(CommandLine).find(Key);
-    if (Position == std::string::npos)
-        return -1;
-    std::string Value = CommandLine.substr(Position + strlen(Key));
-    size_t End = Value.find(' ');
-    if (End != std::string::npos)
-        Value = Value.substr(0, End);
-    while (!Value.empty() && (Value.front() == '"' || Value.front() == '\''))
-        Value.erase(Value.begin());
-    while (!Value.empty() && (Value.back() == '"' || Value.back() == '\''))
-        Value.pop_back();
-    if (Value.empty())
-        return -1;
-    bool Numeric = true;
-    for (auto C : Value)
-        if (!isdigit((unsigned char)C)) {
-            Numeric = false;
-            break;
-        }
-    if (Numeric) {
-        int N = atoi(Value.c_str());
-        if (N >= 1 && N <= (int)Monitors.size())
-            return N - 1;
-        return -1;
-    }
-    std::string Needle = ToLower(Value);
-    for (int I = 0; I < (int)Monitors.size(); ++I) {
-        if (ToLower(Monitors[I].Label).find(Needle) != std::string::npos)
-            return I;
-    }
-    return -1;
-}
-
 static void UpdateWindowBounds() {
     if (!OverlayWindow || Monitors.empty())
         return;
@@ -425,9 +389,6 @@ static int SelectStartupMonitor(const char* CommandLine) {
             }
         }
     }
-    int RequestedMonitor = ParseMonitorArgument(CommandLine);
-    if (RequestedMonitor >= 0)
-        MonitorIndex = RequestedMonitor;
 
     return MonitorIndex;
 }
@@ -472,7 +433,7 @@ static void ConnectWindowSettings() {
         InsetMode = !On;
         UpdateWindowBounds();
     };
-    Gui.OnScreenproofChange = [](bool On) {
+    Gui.OnStreamproofChange = [](bool On) {
         if (!OverlayWindow)
             return;
 
@@ -655,3 +616,5 @@ int WINAPI wWinMain(HINSTANCE, HINSTANCE, LPWSTR, int) {
     CloseHandle(InstanceMutex);
     return 0;
 }
+
+//why would you even read this bad code

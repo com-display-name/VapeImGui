@@ -314,9 +314,9 @@ void VapeGui::RenderSettings() {
             RenderToggleRow("Text GUI", TextGuiEnabled, "##s_textgui", AccentColor);
             RenderToggleRow("Toggle notifications", ToggleNotifications, "##s_notif", AccentColor);
 
-            if (RenderToggleRow("Streamproof", Screenproof, "##s_screenproof", AccentColor)) {
-                if (OnScreenproofChange)
-                    OnScreenproofChange(Screenproof);
+            if (RenderToggleRow("Streamproof", Streamproof, "##s_Streamproof", AccentColor)) {
+                if (OnStreamproofChange)
+                    OnStreamproofChange(Streamproof);
             }
             if (RenderNavigationButton("Visual", "##s_visual"))
                 SettingsPage = Vape::SettingsView::Visual;
